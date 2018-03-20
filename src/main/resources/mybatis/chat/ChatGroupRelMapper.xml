@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.demo.chat.dao.ChatGroupRelDao" >
+	<resultMap id="BaseResultMap" type="com.demo.chat.entity.ChatGroupRel" >
+		<result column="id" property="id" jdbcType="BIGINT" />
+		<result column="group_id" property="groupId" jdbcType="BIGINT" />
+		<result column="user_id" property="userId" jdbcType="BIGINT" />
+		<result column="last_msg_id" property="lastMsgId" jdbcType="BIGINT" />
+		<result column="unread_num" property="unreadNum" jdbcType="INTEGER" />
+		<result column="app_id" property="appId" jdbcType="INTEGER" />
+	</resultMap>
+	<sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="example" >
+              <choose >
+                <when test="example.noValue" >
+                  and ${example.condition}
+                </when>
+                <when test="example.singleValue" >
+                  and ${example.condition} #{example.value}
+                </when>
+                <when test="example.betweenValue" >
+                  and ${example.condition} #{example.value} and #{example.secondValue}
+                </when>
+                <when test="example.listValue" >
+                  and ${example.condition}
+                  <foreach collection="example.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="example" >
+              <choose >
+                <when test="example.noValue" >
+                  and ${example.condition}
+                </when>
+                <when test="example.singleValue" >
+                  and ${example.condition} #{example.value}
+                </when>
+                <when test="example.betweenValue" >
+                  and ${example.condition} #{example.value} and #{example.secondValue}
+                </when>
+                <when test="example.listValue" >
+                  and ${example.condition}
+                  <foreach collection="example.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    	id,
+    	group_id,
+    	user_id,
+    	last_msg_id,
+    	unread_num,
+    	app_id
+  </sql>
+  
+ <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.demo.chat.entity.ChatGroupRelExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from chat_group_rel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="page != null" >
+      limit #{page.limit} offset #{page.offset}*#{page.limit}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from chat_group_rel
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from chat_group_rel
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.demo.chat.entity.ChatGroupRelExample" >
+    delete from chat_group_rel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.demo.chat.entity.ChatGroupRel" >
+    insert into chat_group_rel (
+    	id,
+    	group_id,
+    	user_id,
+    	last_msg_id,
+    	unread_num,
+    	app_id
+    )
+    values (
+    	#{id,jdbcType=BIGINT},
+    	#{groupId,jdbcType=BIGINT},
+    	#{userId,jdbcType=BIGINT},
+    	#{lastMsgId,jdbcType=BIGINT},
+    	#{unreadNum,jdbcType=INTEGER},
+    	app_id
+    )
+  </insert>
+  <insert id="insertSelective" parameterType="com.demo.chat.entity.ChatGroupRel" >
+    insert into chat_group_rel
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="groupId != null" >
+        group_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="lastMsgId != null" >
+        last_msg_id,
+      </if>
+      <if test="unreadNum != null" >
+        unread_num,
+      </if>
+      <if test="appId != null" >
+        app_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+   	  <if test="id != null" >
+        #{ id,jdbcType=BIGINT},
+      </if>
+   	  <if test="groupId != null" >
+        #{ groupId,jdbcType=BIGINT},
+      </if>
+   	  <if test="userId != null" >
+        #{ userId,jdbcType=BIGINT},
+      </if>
+   	  <if test="lastMsgId != null" >
+        #{ lastMsgId,jdbcType=BIGINT},
+      </if>
+   	  <if test="unreadNum != null" >
+        #{ unreadNum,jdbcType=INTEGER},
+      </if>
+   	  <if test="appId != null" >
+        #{ appId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.demo.chat.entity.ChatGroupRelExample" resultType="java.lang.Integer" >
+    select count(*) from chat_group_rel
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update chat_group_rel
+    <set>
+	   	  <if test="record.id != null" >
+	        id = #{record.id,jdbcType=BIGINT},
+	      </if>
+	   	  <if test="record.groupId != null" >
+	        group_id = #{record.groupId,jdbcType=BIGINT},
+	      </if>
+	   	  <if test="record.userId != null" >
+	        user_id = #{record.userId,jdbcType=BIGINT},
+	      </if>
+	   	  <if test="record.lastMsgId != null" >
+	        last_msg_id = #{record.lastMsgId,jdbcType=BIGINT},
+	      </if>
+	   	  <if test="record.unreadNum != null" >
+	        unread_num = #{record.unreadNum,jdbcType=INTEGER},
+	      </if>
+	   	  <if test="record.appId != null" >
+	        app_id = #{record.appId,jdbcType=INTEGER},
+	      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update chat_group_rel
+    set 
+	        id = #{record.id,jdbcType=BIGINT},
+	        group_id = #{record.groupId,jdbcType=BIGINT},
+	        user_id = #{record.userId,jdbcType=BIGINT},
+	        last_msg_id = #{record.lastMsgId,jdbcType=BIGINT},
+	        unread_num = #{record.unreadNum,jdbcType=INTEGER},
+	        app_id = #{record.appId,jdbcType=INTEGER}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.demo.chat.entity.ChatGroupRel" >
+    update chat_group_rel
+    <set>
+   	  <if test="groupId != null" >
+        group_id = #{ groupId,jdbcType=BIGINT},
+      </if>
+   	  <if test="userId != null" >
+        user_id = #{ userId,jdbcType=BIGINT},
+      </if>
+   	  <if test="lastMsgId != null" >
+        last_msg_id = #{ lastMsgId,jdbcType=BIGINT},
+      </if>
+   	  <if test="unreadNum != null" >
+        unread_num = #{ unreadNum,jdbcType=INTEGER},
+      </if>
+   	  <if test="appId != null" >
+        app_id = #{ appId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.demo.chat.entity.ChatGroupRel" >
+    update chat_group_rel
+    set 
+        group_id = #{ groupId,jdbcType=BIGINT},
+        user_id = #{ userId,jdbcType=BIGINT},
+        last_msg_id = #{ lastMsgId,jdbcType=BIGINT},
+        unread_num = #{ unreadNum,jdbcType=INTEGER},
+        app_id = #{ appId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
