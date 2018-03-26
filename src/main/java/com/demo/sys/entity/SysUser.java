@@ -1,7 +1,6 @@
 package com.demo.sys.entity;
 
 import java.util.Date;
-import java.util.Date;
 import java.util.List;
 
 public class SysUser {

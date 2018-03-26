@@ -2,12 +2,14 @@ package com.demo.base;
 
 import com.demo.base.api.CustomRequestMappingHandlerMapping;
 import com.demo.aop.verification.ValidateHandler;
+import com.demo.base.converter.StringToDateConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
@@ -22,12 +24,16 @@ import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConvert
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.nio.charset.Charset;
 import java.util.List;
 
@@ -40,6 +46,9 @@ public class WebConfiguration extends WebMvcConfigurationSupport implements Appl
     private static final boolean jackson2XmlPresent = ClassUtils.isPresent("com.fasterxml.jackson.dataformat.xml.XmlMapper", WebMvcConfigurationSupport.class.getClassLoader());
     private static final boolean gsonPresent = ClassUtils.isPresent("com.google.gson.Gson", WebMvcConfigurationSupport.class.getClassLoader());
     private ApplicationContext applicationContext;
+
+    @Resource
+    private RequestMappingHandlerAdapter handlerAdapter;
 
     @Override
     @Bean
@@ -96,6 +105,20 @@ public class WebConfiguration extends WebMvcConfigurationSupport implements Appl
         }
     }
 
-
+    /**
+     * 添加转换器
+     * @return
+     */
+    @Bean
+    public String initEditableValidation() {
+        ConfigurableWebBindingInitializer initializer = (ConfigurableWebBindingInitializer) handlerAdapter
+                .getWebBindingInitializer();
+        if (initializer.getConversionService() != null) {
+            GenericConversionService genericConversionService = (GenericConversionService) initializer
+                    .getConversionService();
+            genericConversionService.addConverter(new StringToDateConverter());
+        }
+        return null;
+    }
 
 }
