@@ -18,10 +18,39 @@ public class SysUserRoleServiceImpl extends BaseServiceImpl<SysUserRole, SysUser
     @Resource
     private SysUserRoleDao dao;
 
+
     @Override
     public BaseDao<SysUserRole, SysUserRoleExample> getDao() throws DaoException {
         return dao;
     }
-    
-    
+
+    @Override
+    public void insertUserRole(Integer userId, Integer roleId) {
+        SysUserRole ur = new SysUserRole();
+        ur.setUserId(userId);
+        ur.setRoleId(roleId);
+        dao.insertSelective(ur);
+    }
+
+    @Override
+    public void deleteUserRole(Integer userId) {
+        SysUserRoleExample example = new SysUserRoleExample();
+        SysUserRoleExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(userId);
+        dao.deleteByExample(example);
+    }
+
+    @Override
+    public void updateUserRole(Integer userId, Integer roleId) {
+
+        SysUserRoleExample example = new SysUserRoleExample();
+        SysUserRoleExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(userId);
+        dao.deleteByExample(example);
+
+        SysUserRole ur = new SysUserRole();
+        ur.setUserId(userId);
+        ur.setRoleId(roleId);
+        dao.insertSelective(ur);
+    }
 }

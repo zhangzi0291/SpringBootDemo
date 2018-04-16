@@ -6,4 +6,7 @@ import com.demo.sys.entity.SysUserRoleExample;
 
 public interface SysUserRoleService extends BaseService<SysUserRole, SysUserRoleExample> {
 
+    void insertUserRole(Integer userId,Integer roleId);
+    void deleteUserRole(Integer userId);
+    void updateUserRole(Integer userId,Integer roleId);
 }

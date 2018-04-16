@@ -1,5 +1,7 @@
 package com.demo.sys.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +51,30 @@ public class SysRoleController {
         }
         return R.error("无数据");
     }
-    
+
+    @RequestMapping("selectOptions")
+    @ResponseBody
+    public R selectOptions(SysRole sysRole){
+        SysRoleExample example = new SysRoleExample();
+        SysRoleExample.Criteria criteria = example.createCriteria();
+        //设置查询条件 。。。
+
+        try {
+            List< SysRole> list = sysRoleService.selectByExample(example);
+            List<Map<String,Object>> options = new ArrayList<>();
+            list.forEach(role->{
+                Map<String,Object> map = new HashMap<>();
+                map.put("name",role.getRoleName());
+                map.put("value",role.getId());
+                options.add(map);
+            });
+            return R.ok().putObject("data",options);
+        } catch (DaoException e) {
+            logger.error("Exception ", e);
+        }
+        return R.error("无数据");
+    }
+
     @RequestMapping("add")
     @Transactional
     public R addJson(SysRole sysRole ){

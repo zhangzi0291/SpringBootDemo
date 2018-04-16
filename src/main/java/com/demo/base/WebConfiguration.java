@@ -1,7 +1,7 @@
 package com.demo.base;
 
-import com.demo.base.api.CustomRequestMappingHandlerMapping;
 import com.demo.aop.verification.ValidateHandler;
+import com.demo.base.api.CustomRequestMappingHandlerMapping;
 import com.demo.base.converter.StringToDateConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,14 +25,12 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.support.ConfigurableWebBindingInitializer;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.nio.charset.Charset;
 import java.util.List;

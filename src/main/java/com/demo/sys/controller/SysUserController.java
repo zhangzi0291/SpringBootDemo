@@ -1,11 +1,14 @@
 package com.demo.sys.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
 
 import com.demo.base.R;
+import com.demo.sys.entity.SysUserDto;
+import com.demo.sys.service.SysUserRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -29,7 +32,9 @@ public class SysUserController {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Resource
     private SysUserService sysUserService;
-    
+    @Resource
+    private SysUserRoleService sysUserRoleService;
+
     @RequestMapping("list")
     @ResponseBody
     public R listJson(SysUser sysUser, Page page){
@@ -52,10 +57,15 @@ public class SysUserController {
     
     @RequestMapping("add")
     @Transactional
-    public R addJson(SysUser sysUser ){
+    public R addJson(SysUser sysUser ,Integer roleId){
     	Integer num = 0;
+    	if(roleId == null){
+            return R.error("保存失败,必须选择角色");
+        }
         try {
+    	    sysUser.setCreateTime(new Date());
             num = sysUserService.insertSelective(sysUser);
+            sysUserRoleService.insertUserRole(sysUser.getId(),roleId);
             if(num==0){
                 return R.error("保存失败,无数据");
             }
@@ -69,18 +79,21 @@ public class SysUserController {
    	@RequestMapping("get")
     public R get(Integer id){
         try {
-            return R.ok("data",sysUserService.selectByPrimaryKey(id));
-        } catch (DaoException e) {
+            SysUserDto user =  sysUserService.getUserAndRoleId(id);
+            user.setPassword(null);
+            return R.ok("data",user);
+        } catch (Exception e) {
             logger.error("Exception ", e);
         }
         return R.error("无数据");
     }
    
     @RequestMapping("edit")
-    public R editJson(Map<String, Object> map, SysUser sysUser){
+    public R editJson(Map<String, Object> map, SysUser sysUser, Integer roleId){
    		Integer num = 0;
         try {
             num = sysUserService.updateByPrimaryKeySelective(sysUser);
+            sysUserRoleService.updateUserRole(sysUser.getId(),roleId);
             if(num==0){
                 return R.error("保存失败,无数据");
             }
@@ -98,6 +111,7 @@ public class SysUserController {
         try {
             for(int i=0;i<ids.size();i++){
                 num+=sysUserService.deleteByPrimaryKey(ids.get(i));
+                sysUserRoleService.deleteUserRole(ids.get(i));
             }
         } catch (DaoException e) {
             logger.error("Exception ", e);

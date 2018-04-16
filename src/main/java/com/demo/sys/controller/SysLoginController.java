@@ -28,12 +28,11 @@ public class SysLoginController {
     private SysResourceService resourceService;
 
     @RequestMapping("/getMenu")
-    public R getMenu(String username) {
-        return R.ok("menu",resourceService.getMenus(username));
+    public R getMenu(Integer id) {
+        return R.ok("menu",resourceService.getMenus(id));
     }
     @RequestMapping("/get")
     public R get(String username) {
-        System.out.println(1111111111);
         return R.ok("menu");
     }
 

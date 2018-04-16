@@ -68,7 +68,7 @@
         <appender-ref ref="errorFile" />
     </root>
     <logger name="org" level="info" />
-    <logger name="org.springframework.security" level="debug" />
+    <!--<logger name="org.springframework.security" level="debug" />-->
     <logger name="com.demo"/>
     <!-- 输出mybaits的sql -->
     <logger name="dao" level="debug" />

@@ -117,7 +117,7 @@
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.demo.sys.entity.SysUser" >
+  <insert id="insert" parameterType="com.demo.sys.entity.SysUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into sys_user (
     	id,
     	username,
@@ -143,7 +143,7 @@
     	create_time
     )
   </insert>
-  <insert id="insertSelective" parameterType="com.demo.sys.entity.SysUser" >
+  <insert id="insertSelective" parameterType="com.demo.sys.entity.SysUser" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
     insert into sys_user
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
