@@ -60,8 +60,11 @@ export default {
     beforeMount() {
         let $this = this
         this.$ajax({
-            method: 'get',
+            method: 'post',
             url: '/sys/getMenu',
+            data:{
+                id:$this.$store.state.user.id
+            }
         }).then(function(res) {
             $this.menuList = res.data.menu
         })

@@ -3,14 +3,17 @@
         <Form :model="data" :inline='inline'>
             <template v-for="item in columns">
                 <FormItem :label="item.value+'：'" :key="item.id" :v-model="data[item.key]">
-                    <Input v-model="data[item.key]" :readonly='readonly'></Input>
+                    <Select v-model="data[item.key]" :readonly='item.readonly' v-if="item.type=='select'">                  
+                        <Option v-for="op in item.child" :value="op.value" :key="op.value" >{{ op.name }}</Option>
+                    </Select>
+                    <RadioGroup v-model="data[item.key]" v-else-if="item.type=='radio'">
+                        <Radio v-for="op in item.child" :value="op.value" :key="op.value" :label="op.name"></Radio>
+                    </RadioGroup>
+                    <Input v-model="data[item.key]" :readonly='item.readonly' type="password" v-else-if="item.type=='password'"></Input>
+                    <Input v-model="data[item.key]" :readonly='item.readonly' v-else></Input>
                 </FormItem>
             </template>
         </Form>
-        <!--<div slot="footer">
-                <Button type="text" size="large"   >取消</Button>
-                <Button type="primary" size="large"   >确定</Button>
-            </div>-->
     </Modal>
 </template>
 <script>
@@ -18,7 +21,7 @@ export default {
     // name: 'mModal',
     data() {
         return {
-            isshow: this.show
+            isshow: this.show ,
         }
     },
     computed: {
@@ -27,7 +30,6 @@ export default {
             for (x in this.data) {
                 array.push(x, this.data.x);
             }
-            console.log(array)
             return array
         },
         inline: function() {
@@ -39,6 +41,32 @@ export default {
         show(val) {
             this.isshow = val
         },
+        data(val){
+            let $this = this; 
+            this.columns.forEach(function(val,index,err){
+                if(val.type=='password'){
+                    $this.data[val.key] = undefined
+                }
+            })
+        }
+    },
+    mounted() {
+        let $this = this; 
+        this.columns.forEach(function(val,index,err){
+            if(val.type=='password'){
+                // console.log($this.data)
+                // $this.data[val.key] = undefined
+            }
+            if(val.ajax){
+                $this.$ajax({
+                    method: 'post',
+                    url: val.ajax.url,
+                    data: val.ajax.data
+                }).then(function(res) {
+                    val.child = res.data.data
+                })
+            }
+        })
     },
     props: {
         title: {
@@ -52,10 +80,6 @@ export default {
         },
         show: {
             type: Boolean
-        },
-        readonly: {
-            type: Boolean,
-            default: false
         },
         ok: {
             type: Function,

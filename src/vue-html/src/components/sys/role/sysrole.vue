@@ -50,8 +50,47 @@
     <div class="page-content">
       <t-table ref='table' :url='url.list' :param='data.param' :columns='data.columns'></t-table>
     </div>
-    <m-modal ref='editModal' :title="'编辑'" :show='editshow' :data='detail.data' :columns='detail.columns' :ok='editok'></m-modal>
-    <m-modal ref='addModal' :title="'新增'" :show='addshow' :data='detail.data' :columns='add.columns' :ok='addok'></m-modal>
+    <!--<m-modal ref='editModal' :title="'编辑'" :show='editshow' :data='detail.data' :columns='detail.columns' :ok='editok'></m-modal>-->
+    <Modal ref='editModal' v-model="editshow" :title="'编辑'" width="380" @on-ok='editok'>
+      <Form :model="detail.data">
+        <template v-for="item in detail.columns">
+          <FormItem :label="item.value+'：'" :key="item.id" :v-model="detail.data[item.key]">
+            <Select v-model="detail.data[item.key]" :readonly='item.readonly' v-if="item.type=='select'">
+              <Option v-for="op in item.child" :value="op.value" :key="op.value">{{ op.name }}</Option>
+            </Select>
+            <RadioGroup v-model="detail.data[item.key]" v-else-if="item.type=='radio'">
+              <Radio v-for="op in item.child" :value="op.value" :key="op.value" :label="op.name"></Radio>
+            </RadioGroup>
+            <Input v-model="detail.data[item.key]" :readonly='item.readonly' type="password" v-else-if="item.type=='password'"></Input>
+            <Input v-model="detail.data[item.key]" :readonly='item.readonly' v-else></Input>
+          </FormItem>
+        </template>
+        <FormItem :label="'菜单：'">
+        </FormItem>
+        <Tree :data="menuItems" show-checkbox></Tree>
+      </Form>
+    </Modal>
+
+    <!--<m-modal ref='addModal' :title="'新增'" :show='addshow' :data='detail.data' :columns='add.columns' :ok='addok'></m-modal>-->
+    <Modal ref='addModal' v-model="addshow" :title="'新增'" width="380" @on-ok='addok'>
+      <Form :model="add.data">
+        <template v-for="item in add.columns">
+          <FormItem :label="item.value+'：'" :key="item.id" :v-model="add.data[item.key]">
+            <Select v-model="add.data[item.key]" :readonly='item.readonly' v-if="item.type=='select'">
+              <Option v-for="op in item.child" :value="op.value" :key="op.value">{{ op.name }}</Option>
+            </Select>
+            <RadioGroup v-model="add.data[item.key]" v-else-if="item.type=='radio'">
+              <Radio v-for="op in item.child" :value="op.value" :key="op.value" :label="op.name"></Radio>
+            </RadioGroup>
+            <Input v-model="add.data[item.key]" :readonly='item.readonly' type="password" v-else-if="item.type=='password'"></Input>
+            <Input v-model="add.data[item.key]" :readonly='item.readonly' v-else></Input>
+          </FormItem>
+        </template>
+        <FormItem :label="'菜单：'">
+        </FormItem>
+        <Tree :data="menuItems" show-checkbox ref="tree"></Tree>
+      </Form>
+    </Modal>
   </div>
 </template>
 <script>
@@ -59,31 +98,29 @@ export default {
   name: "sysmenu",
   data() {
     return {
-      url:{
-        list:"/sys/menu/list",
-        add:'/sys/menu/add',
-        get:'/sys/menu/get',
-        edit:'/sys/menu/edit',
-        del:'/sys/menu/del'
+      url: {
+        list: "/sys/role/list",
+        add: '/sys/role/add',
+        get: '/sys/role/get',
+        edit: '/sys/role/edit',
+        del: '/sys/role/del',
+        allMenu: "/sys/menu/getAllMenu",
       },
       detail: {
         data: {},
         columns: [
-          { "key": "id", "value": "ID" },
-          { "key": "resourceName", "value": "名称" },
-          { "key": "resourceUrl", "value": "URL" },
-          { "key": "resourceType", "value": "类型" },
-          { "key": "resourceIcon", "value": "图标" },
+          { key: "roleName", value: "名称" },
+          { key: "status", value: "状态", type: 'select', child: [{ name: '可用', value: '1' }, { name: '禁用', value: '2' }] },
         ]
       },
       add: {
+        data: {},
         columns: [
-          { "key": "resourceName", "value": "名称" },
-          { "key": "resourceUrl", "value": "URL" },
-          { "key": "resourceType", "value": "类型" },
-          { "key": "resourceIcon", "value": "图标" },
+          { key: "roleName", value: "名称" },
+          { key: "status", value: "状态", type: 'select', child: [{ name: '可用', value: '1' }, { name: '禁用', value: '2' }] },
         ]
       },
+      menuItems: [],
       searchData: {
         resourceName: '',
         resourceType: '',
@@ -119,7 +156,7 @@ export default {
                   }
                 }
               });
-              // const edit = h('Button', { props: { type: 'ghost', shape: 'circle', icon: 'edit', size: 'small' } });
+
               const remove = h('Button', {
                 props: { type: 'ghost', shape: 'circle', icon: 'trash-a', size: 'small' }, on: {
                   click: () => {
@@ -144,26 +181,28 @@ export default {
             }
           },
           {
-            title: '名字',
-            key: 'resourceName',
+            title: '名称',
+            key: 'roleName',
             sortable: 'custom'
-          },
-          {
-            title: '类型',
-            key: 'resourceType',
-            sortable: 'custom'
-          },
-          {
-            title: 'URL',
-            key: 'resourceUrl'
           },
           {
             title: '状态',
-            key: 'status'
-          },
+            key: 'status',
+            sortable: 'custom',
+            render: (h, params) => {
+              let value = '';
+              if (params.row.status == 1) {
+                value = '可用'
+              } else if (params.row.status == 2) {
+                value = '禁用'
+              } else {
+                value = params.row.status;
+              }
+              return h('div', value)
+            }
+          }
         ],
       },
-      value: '123'
     }
   },
   methods: {
@@ -173,14 +212,16 @@ export default {
     },
     editok: function() {
       let $this = this;
-      this.$ajax({
-        method: 'post',
-        url: this.url.edit,
-        data: this.$refs.editModal.getParams()
-      }).then(function(res) {
-        $this.$refs.table.searchData()
-        $this.successModal("编辑成功")
-      })
+      let node = this.$refs.tree.getCheckedNodes()
+      console.log(node)
+      // this.$ajax({
+      //   method: 'post',
+      //   url: this.url.edit,
+      //   data: this.detail.data
+      // }).then(function(res) {
+      //   $this.$refs.table.searchData()
+      //   $this.successModal("编辑成功")
+      // })
     },
     dropdownFunction: function(name) {
       if (name == 'add') {
@@ -192,7 +233,7 @@ export default {
       this.$ajax({
         method: 'post',
         url: this.url.add,
-        data: this.$refs.addModal.getParams()
+        data: this.add.data
       }).then(function(res) {
         $this.$refs.table.searchData()
         $this.detail.data = {}
@@ -203,7 +244,14 @@ export default {
 
   },
   mounted() {
+    let $this = this;
     this.data.param = this.searchData
+    this.$ajax({
+      method: 'post',
+      url: this.url.allMenu
+    }).then(function(res) {
+      $this.menuItems = res.data.data
+    })
   }
 
 }

@@ -51,7 +51,7 @@
             <t-table ref='table' :url='url.list' :param='data.param' :columns='data.columns'></t-table>
         </div>
         <m-modal ref='editModal' :title="'编辑'" :show='editshow' :data='detail.data' :columns='detail.columns' :ok='editok'></m-modal>
-        <m-modal ref='addModal' :title="'新增'" :show='addshow' :data='detail.data' :columns='add.columns' :ok='addok'></m-modal>
+        <m-modal ref='addModal' :title="'新增'" :show='addshow' :data='add.data' :columns='add.columns' :ok='addok'></m-modal>
     </div>
 </template>
 <script>
@@ -71,18 +71,23 @@ export default {
                 columns: [
                     { key: "name", value: "名称" },
                     { key: "username", value: "用户名" },
+                    { key: "password", value: "密码", type:'password'},
                     { key: "mobile", value: "手机号" },
                     { key: "email", value: "电子邮件" },
-                    { key: "status", value: "状态" },
+                    { key: "roleId", value: "角色",type:'select', ajax:{url:'sys/role/selectOptions'}},
+                    { key: "status", value: "状态",type:'select', child:[{name:'可用',value:'1'},{name:'禁用',value:'2'}]},
                 ]
             },
             add: {
+                data:{},
                 columns: [
                     { key: "name", value: "名称" },
                     { key: "username", value: "用户名" },
+                    { key: "password", value: "密码", type:'password'},
                     { key: "mobile", value: "手机号" },
-                    { key: "email", value: "电子邮件" },
-                    { key: "status", value: "状态" },
+                    { key: "email", value: "电子邮件", },
+                    { key: "roleId", value: "角色",type:'select', ajax:{url:'sys/role/selectOptions'}},
+                    { key: "status", value: "状态",type:'select', child:[{name:'可用',value:'1'},{name:'禁用',value:'2'}]},
                 ]
             },
             searchData: {
@@ -187,6 +192,11 @@ export default {
             value: '123'
         }
     },
+    watch:{
+        addshow(val){
+            console.log(val)
+        }
+    },
     methods: {
         search: function() {
             this.data.param = this.searchData
@@ -200,12 +210,17 @@ export default {
                 data: this.$refs.editModal.getParams()
             }).then(function(res) {
                 $this.$refs.table.searchData()
+                $this.detail.data = {}
                 $this.successModal("编辑成功")
             })
         },
         dropdownFunction: function(name) {
             if (name == 'add') {
-                this.addshow = true;
+                let $this = this;
+                $this.addshow = false;
+                setTimeout(function(){
+                    $this.addshow = true;
+                },100)
             }
         },
         addok: function() {
@@ -216,7 +231,7 @@ export default {
                 data: this.$refs.addModal.getParams()
             }).then(function(res) {
                 $this.$refs.table.searchData()
-                $this.detail.data = {}
+                $this.add.data = {}
                 $this.successModal("新增成功")
             })
             this.addshow = false;

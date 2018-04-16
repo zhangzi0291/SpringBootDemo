@@ -5,8 +5,8 @@ import login from '@/components/login'
 import chat from '@/components/chat'
 import index from '@/components/index'
 import sysmenu from '@/components/sys/menu/sysmenu'
-import sysrole from '@/components/sys/menu/sysrole'
-import sysuser from '@/components/sys/menu/sysuser'
+import sysrole from '@/components/sys/role/sysrole'
+import sysuser from '@/components/sys/user/sysuser'
 
 Vue.use(Router)
 
