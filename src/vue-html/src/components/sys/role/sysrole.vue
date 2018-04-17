@@ -67,7 +67,7 @@
         </template>
         <FormItem :label="'菜单：'">
         </FormItem>
-        <Tree :data="menuItems" show-checkbox></Tree>
+        <Tree :data="detail.menuItems" show-checkbox ref="edittree"></Tree>
       </Form>
     </Modal>
 
@@ -88,7 +88,7 @@
         </template>
         <FormItem :label="'菜单：'">
         </FormItem>
-        <Tree :data="menuItems" show-checkbox ref="tree"></Tree>
+        <Tree :data="add.menuItems" show-checkbox ref="addtree"></Tree>
       </Form>
     </Modal>
   </div>
@@ -111,16 +111,18 @@ export default {
         columns: [
           { key: "roleName", value: "名称" },
           { key: "status", value: "状态", type: 'select', child: [{ name: '可用', value: '1' }, { name: '禁用', value: '2' }] },
-        ]
+        ],
+        menuItems: [],
       },
       add: {
         data: {},
         columns: [
           { key: "roleName", value: "名称" },
           { key: "status", value: "状态", type: 'select', child: [{ name: '可用', value: '1' }, { name: '禁用', value: '2' }] },
-        ]
+        ],
+        menuItems: [],
       },
-      menuItems: [],
+      
       searchData: {
         resourceName: '',
         resourceType: '',
@@ -151,6 +153,8 @@ export default {
                     }).then(function(res) {
                       $this.editshow = true;
                       $this.detail.data = res.data.data
+                      console.log( res.data.options)
+                      $this.detail.menuItems = res.data.options
                     })
                     $this.editshow = false;
                   }
@@ -212,16 +216,15 @@ export default {
     },
     editok: function() {
       let $this = this;
-      let node = this.$refs.tree.getCheckedNodes()
-      console.log(node)
-      // this.$ajax({
-      //   method: 'post',
-      //   url: this.url.edit,
-      //   data: this.detail.data
-      // }).then(function(res) {
-      //   $this.$refs.table.searchData()
-      //   $this.successModal("编辑成功")
-      // })
+      this.detail.data.resources = JSON.stringify(this.$refs.edittree.getCheckedNodes());
+      this.$ajax({
+        method: 'post',
+        url: this.url.edit,
+        data: this.detail.data
+      }).then(function(res) {
+        $this.$refs.table.searchData()
+        $this.successModal("编辑成功")
+      })
     },
     dropdownFunction: function(name) {
       if (name == 'add') {
@@ -230,10 +233,12 @@ export default {
     },
     addok: function() {
       let $this = this;
+      this.add.data.resources = JSON.stringify(this.$refs.addtree.getCheckedNodes());
       this.$ajax({
         method: 'post',
         url: this.url.add,
-        data: this.add.data
+        data: this.add.data,
+        traditional: true,
       }).then(function(res) {
         $this.$refs.table.searchData()
         $this.detail.data = {}
@@ -250,7 +255,7 @@ export default {
       method: 'post',
       url: this.url.allMenu
     }).then(function(res) {
-      $this.menuItems = res.data.data
+      $this.add.menuItems = res.data.data
     })
   }
 

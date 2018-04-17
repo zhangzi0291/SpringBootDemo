@@ -307,8 +307,11 @@
         LEFT JOIN sys_user_role ur ON r.id = ur.role_id
         LEFT JOIN sys_user u ON u.id = ur.user_id
         where rs.resource_type = 'url'
-        <if test="id != null and id != '1' ">
-            and u.id = #{id,jdbcType=INTEGER}
+        <if test="userId != null and userId != '1' ">
+            and u.id = #{userId,jdbcType=INTEGER}
+        </if>
+        <if test="roleId != null and roleId != '' ">
+            and r.id = #{roleId,jdbcType=INTEGER}
         </if>
         order by rs.resource_order_num
     </select>

@@ -4,16 +4,16 @@
             <Header>Header</Header>
             <Content class='layout-content'>
 
-                <Card class='login-card'>
+                <Card class='login-card' @keyup="login">
                     <div style="text-align:center">
                         <p class='login-tilte' slot="title">登陆</p>
                         <div class='login-content'>
-                            <Input class='login-input' :icon='usericon' :value="username" clearable>
+                            <Input class='login-input' v-model="username" :icon='usericon' :value="username" clearable autofocus>
                             <span slot="prepend">
                                 <Icon type="person"></Icon>
                             </span>
                             </Input>
-                            <Input class='login-input' :type='passtype' :icon='passicon' :value="password" @on-click='showPassword'>
+                            <Input class='login-input' v-model="password" :type='passtype' :icon='passicon' :value="password" @on-click='showPassword'>
                             <span slot="prepend">
                                 <Icon type="locked"></Icon>
                             </span>
@@ -36,6 +36,16 @@ export default {
             username: localStorage.username,
             password: localStorage.password,
             isShow: true,
+            write: false,
+        }
+    },
+    created() {
+        let $this = this;
+        document.onkeyup = function(e) {
+            let key = e.keyCode
+            if(key == 13){
+                $this.login()
+            }
         }
     },
     computed: {
@@ -67,12 +77,14 @@ export default {
                     if ($this.remember) {
                         localStorage.username = $this.username
                         localStorage.password = $this.password
-                    }else{
+                    } else {
                         localStorage.username = ''
                         localStorage.password = ''
                     }
                     $this.$store.commit('LOGIN', res.data.user)
                     $this.$router.push('/home')
+                } else {
+                    $this.errorModal("登陆失败")
                 }
             })
         }

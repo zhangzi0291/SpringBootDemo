@@ -38,7 +38,15 @@ public class SysResourceServiceImpl extends BaseServiceImpl<SysResource, SysReso
     @Override
     public List<SysResource> getMenus(Integer id) {
         Map<String, Object> param = new HashMap<>();
-        param.put("id", id);
+        param.put("userId", id);
+        List<SysResource> list = dao.selectByUsername(param);
+        return setChildNood(list,null);
+    }
+
+    @Override
+    public List<SysResource> getMenusByRoleId(Integer id) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("roleId", id);
         List<SysResource> list = dao.selectByUsername(param);
         return setChildNood(list,null);
     }

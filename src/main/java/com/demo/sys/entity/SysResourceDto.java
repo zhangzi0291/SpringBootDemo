@@ -5,7 +5,9 @@ import java.util.List;
 
 public class SysResourceDto extends SysResource{
 
-    List<SysResourceDto> children;
+    private List<SysResourceDto> children;
+
+    private Boolean checked;
 
     public String getTitle() {
         return this.getResourceName();
@@ -19,6 +21,13 @@ public class SysResourceDto extends SysResource{
         this.children = children;
     }
 
+    public Boolean getChecked() {
+        return checked;
+    }
+
+    public void setChecked(Boolean checked) {
+        this.checked = checked;
+    }
 //    public Boolean getLoading() {
 //        return this.getChild().size()>0?false:null;
 //    }
