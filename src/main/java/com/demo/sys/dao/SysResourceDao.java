@@ -9,6 +9,7 @@ import java.util.Map;
 
 public interface SysResourceDao extends BaseDao<SysResource, SysResourceExample> {
 
-    List<SysResource> selectByUsername(Map<String, Object> param);
+    List<SysResource> selectMenus(Map<String, Object> param);
+    List<SysResource> getResourceMenus(Map<String, Object> param);
 
 }

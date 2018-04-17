@@ -39,10 +39,13 @@ public class WebSecurityAuthenticationProvider implements AuthenticationProvider
         String webPassword = (String) authentication.getCredentials();
         String webUsername = (String) authentication.getPrincipal();
         WebSecurityCustomUserDetal detal = (WebSecurityCustomUserDetal)userService.loadUserByUsername(webUsername);
-        String loginname = detal.getUsername();
-        String password = detal.getPassword();
         if(detal == null){
             throw new BadCredentialsException("用户不存在");
+        }
+        String loginname = detal.getUsername();
+        String password = detal.getPassword();
+        if (!webPassword.equals(password)) {
+            throw new BadCredentialsException("用户密码错误");
         }
         if(!detal.isEnabled()){
             throw new BadCredentialsException("用户不可用");
@@ -53,11 +56,7 @@ public class WebSecurityAuthenticationProvider implements AuthenticationProvider
         if(!detal.isAccountNonExpired()){
             throw new BadCredentialsException("用户已经过期");
         }
-        if (!webPassword.equals(password)) {
-            throw new BadCredentialsException("用户密码错误");
-        }
-        
-//        "org.springframework.security.web.csrf"
+
         return createSuccessAuthentication(detal, authentication, detal.getAuthorities());
     }
 

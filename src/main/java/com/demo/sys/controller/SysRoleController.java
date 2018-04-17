@@ -110,7 +110,7 @@ public class SysRoleController {
     public R get(Integer id){
         try {
             List<SysRoleResource> rrlist =  sysRoleResourceService.getResourceByRoleId(id);
-            List<SysResource> list = sysResourceService.getMenus(null);
+            List<SysResource> list = sysResourceService.getResourceMenus(null);
             List<SysResourceDto> options = setChildNood(list,rrlist);
             return R.ok("data",sysRoleService.selectByPrimaryKey(id)).putObject("options",options);
         } catch (DaoException e) {

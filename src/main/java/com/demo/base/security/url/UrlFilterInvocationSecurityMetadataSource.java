@@ -70,4 +70,10 @@ public class UrlFilterInvocationSecurityMetadataSource implements FilterInvocati
     public boolean supports(Class<?> clazz) {
         return FilterInvocation.class.isAssignableFrom(clazz);
     }
+
+    public static void main(String[] args) {
+        AntPathMatcher antPathMatcher = new AntPathMatcher();
+        boolean b = antPathMatcher.match("/sys/menu/*","/sys/menu/list");
+        System.out.println(b);
+    }
 }

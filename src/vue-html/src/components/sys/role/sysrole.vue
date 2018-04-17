@@ -6,7 +6,7 @@
     <div class="page-title">
       <Breadcrumb>
         <BreadcrumbItem to="/home">首页</BreadcrumbItem>
-        <BreadcrumbItem to="/sys/menu">菜单管理</BreadcrumbItem>
+        <BreadcrumbItem to="/sys/menu">角色管理</BreadcrumbItem>
       </Breadcrumb>
     </div>
     <div class="page-content">
@@ -116,7 +116,7 @@ export default {
         ],
         menuItems: [],
       },
-      
+
       searchData: {
         roleName: '',
       },
@@ -207,6 +207,13 @@ export default {
     },
     editok: function() {
       let $this = this;
+      if (this.$refs.editModal.validateForm()) {
+        $this.addshow = false
+        setTimeout(function() {
+          $this.addshow = true;
+        }, 1);
+        return
+      }
       this.detail.data.resources = JSON.stringify(this.$refs.edittree.getCheckedNodes());
       this.$ajax({
         method: 'post',
@@ -224,6 +231,13 @@ export default {
     },
     addok: function() {
       let $this = this;
+      if (this.$refs.addModal.validateForm()) {
+        $this.addshow = false
+        setTimeout(function() {
+          $this.addshow = true;
+        }, 1);
+        return
+      }
       this.add.data.resources = JSON.stringify(this.$refs.addtree.getCheckedNodes());
       this.$ajax({
         method: 'post',

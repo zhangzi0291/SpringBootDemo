@@ -6,7 +6,7 @@
         <div class="page-title">
             <Breadcrumb>
                 <BreadcrumbItem to="/home">首页</BreadcrumbItem>
-                <BreadcrumbItem to="/sys/user">菜单管理</BreadcrumbItem>
+                <BreadcrumbItem to="/sys/user">用户管理</BreadcrumbItem>
             </Breadcrumb>
         </div>
         <div class="page-content">
@@ -74,13 +74,13 @@ export default {
                     { key: "password", value: "密码", type: 'password' },
                     { key: "mobile", value: "手机号" },
                     { key: "email", value: "电子邮件" },
+                    { key: "expiredTime", value: "过期时间", type: 'date' },
                     { key: "roleId", value: "角色", type: 'select', ajax: { url: 'sys/role/selectOptions' } },
                     { key: "status", value: "状态", type: 'select', child: [{ name: '可用', value: '1' }, { name: '禁用', value: '2' }] },
                 ],
                 rule: {
                     "name": [{ required: true, message: "名称必填", trigger: 'blur' }],
                     "username": [{ required: true, message: "用户名必填", trigger: 'blur' }],
-                    "password": [{ required: true, message: "密码必填", trigger: 'blur' }]
                 }
             },
             add: {
@@ -91,6 +91,7 @@ export default {
                     { key: "password", value: "密码", type: 'password' },
                     { key: "mobile", value: "手机号" },
                     { key: "email", value: "电子邮件", },
+                    { key: "expiredTime", value: "过期时间", type: 'date' },
                     { key: "roleId", value: "角色", type: 'select', ajax: { url: 'sys/role/selectOptions' } },
                     { key: "status", value: "状态", type: 'select', child: [{ name: '可用', value: '1' }, { name: '禁用', value: '2' }] },
                 ],
@@ -209,6 +210,13 @@ export default {
         },
         editok: function() {
             let $this = this;
+            if (this.$refs.editModal.validateForm()) {
+                $this.addshow = false
+                setTimeout(function() {
+                    $this.addshow = true;
+                }, 1);
+                return
+            }
             this.$ajax({
                 method: 'post',
                 url: this.url.edit,
@@ -225,11 +233,18 @@ export default {
                 $this.addshow = false;
                 setTimeout(function() {
                     $this.addshow = true;
-                }, 100)
+                }, 1);
             }
         },
         addok: function() {
             let $this = this;
+            if (this.$refs.addModal.validateForm()) {
+                $this.addshow = false
+                setTimeout(function() {
+                    $this.addshow = true;
+                }, 1);
+                return
+            }
             this.$ajax({
                 method: 'post',
                 url: this.url.add,

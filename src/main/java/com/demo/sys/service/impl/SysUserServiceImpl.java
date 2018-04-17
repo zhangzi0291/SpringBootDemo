@@ -3,6 +3,7 @@ package com.demo.sys.service.impl;
 
 import javax.annotation.Resource;
 
+import com.demo.sys.dao.SysRoleDao;
 import com.demo.sys.dao.SysUserRoleDao;
 import com.demo.sys.entity.*;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser, SysUserExample>
     private SysUserDao dao;
     @Resource
     private SysUserRoleDao userRoleDao;
+    @Resource
+    private SysRoleDao roleDao;
 
     @Override
     public BaseDao<SysUser, SysUserExample> getDao() throws DaoException {
@@ -37,7 +40,19 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser, SysUserExample>
         criteria.andusernameEqualTo(username);
         List<SysUser> userList = dao.selectByExample(example);
         if(!CollectionUtils.isEmpty(userList)){
-            return userList.get(0);
+            SysUser user = userList.get(0);
+            SysUserRoleExample example1 = new SysUserRoleExample();
+            SysUserRoleExample.Criteria criteria1 = example1.createCriteria();
+            criteria1.andUserIdEqualTo(user.getId());
+            List<SysUserRole> ur = userRoleDao.selectByExample(example1);
+            if(!CollectionUtils.isEmpty(ur)){
+                SysRoleExample example2 = new SysRoleExample();
+                SysRoleExample.Criteria criteria2 = example2.createCriteria();
+                criteria2.andidEqualTo(ur.get(0).getRoleId());
+                List<SysRole> roleList = roleDao.selectByExample(example2);
+                user.setRoleList(roleList);
+            }
+            return user;
         }
         return null;
     }

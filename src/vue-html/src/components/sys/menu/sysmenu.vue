@@ -50,8 +50,8 @@
     <div class="page-content">
       <t-table ref='table' :url='url.list' :param='data.param' :columns='data.columns'></t-table>
     </div>
-    <m-modal ref='editModal' :title="'编辑'" :show='editshow' :data='detail.data' :columns='detail.columns' :ok='editok'></m-modal>
-    <m-modal ref='addModal' :title="'新增'" :show='addshow' :data='detail.data' :columns='add.columns' :ok='addok'></m-modal>
+    <m-modal ref='editModal' :title="'编辑'" :show='editshow' :data='detail.data' :columns='detail.columns' :ok='editok' :rule='detail.rule'></m-modal>
+    <m-modal ref='addModal' :title="'新增'" :show='addshow' :data='detail.data' :columns='add.columns' :ok='addok' :rule='add.rule'></m-modal>
   </div>
 </template>
 <script>
@@ -59,31 +59,42 @@ export default {
   name: "sysmenu",
   data() {
     return {
-      url:{
-        list:"/sys/menu/list",
-        add:'/sys/menu/add',
-        get:'/sys/menu/get',
-        edit:'/sys/menu/edit',
-        del:'/sys/menu/del'
+      url: {
+        list: "/sys/menu/list",
+        add: '/sys/menu/add',
+        get: '/sys/menu/get',
+        edit: '/sys/menu/edit',
+        del: '/sys/menu/del'
       },
       detail: {
         data: {},
         columns: [
           { "key": "resourceName", "value": "名称" },
           { "key": "resourceUrl", "value": "URL" },
+          { "key": "parentId", "value": "父元素id" },
           { "key": "resourceType", "value": "类型" },
           { "key": "resourceIcon", "value": "图标" },
           { "key": "resourceOrderNum", "value": "排序号" },
-        ]
+        ],
+        rule: {
+          "parentId": [{ required: true, message: "父元素id必填", trigger: 'blur' }],
+          "resourceOrderNum": [{ required: true, message: "排序号必填", trigger: 'blur' }]
+        }
       },
       add: {
+        data: {},
         columns: [
           { "key": "resourceName", "value": "名称" },
           { "key": "resourceUrl", "value": "URL" },
+          { "key": "parentId", "value": "父元素id" },
           { "key": "resourceType", "value": "类型" },
           { "key": "resourceIcon", "value": "图标" },
           { "key": "resourceOrderNum", "value": "排序号" },
-        ]
+        ],
+        rule: {
+          "parentId": [{ required: true, message: "父元素id", trigger: 'blur' }],
+          "resourceOrderNum": [{ required: true, message: "排序号必填", trigger: 'blur' }]
+        }
       },
       searchData: {
         resourceName: '',
@@ -145,6 +156,11 @@ export default {
             }
           },
           {
+            title: 'ID',
+            key: 'id',
+            sortable: 'custom'
+          },
+          {
             title: '名字',
             key: 'resourceName',
             sortable: 'custom'
@@ -173,6 +189,13 @@ export default {
     },
     editok: function() {
       let $this = this;
+      if (this.$refs.editModal.validateForm()) {
+        $this.addshow = false
+        setTimeout(function() {
+          $this.addshow = true;
+        }, 1);
+        return
+      }
       this.$ajax({
         method: 'post',
         url: this.url.edit,
@@ -184,11 +207,22 @@ export default {
     },
     dropdownFunction: function(name) {
       if (name == 'add') {
-        this.addshow = true;
+        let $this = this;
+        $this.addshow = false;
+        setTimeout(function() {
+          $this.addshow = true;
+        }, 1);
       }
     },
     addok: function() {
       let $this = this;
+      if (this.$refs.addModal.validateForm()) {
+        $this.addshow = false
+        setTimeout(function() {
+          $this.addshow = true;
+        }, 1);
+        return
+      }
       this.$ajax({
         method: 'post',
         url: this.url.add,
@@ -197,8 +231,8 @@ export default {
         $this.$refs.table.searchData()
         $this.detail.data = {}
         $this.successModal("新增成功")
+        this.addshow = false;
       })
-      this.addshow = false;
     }
 
   },

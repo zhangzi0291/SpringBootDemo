@@ -2,6 +2,10 @@ package com.demo.sys.service.impl;
 
 
 import javax.annotation.Resource;
+
+import com.demo.sys.dao.SysResourceDao;
+import com.demo.sys.entity.SysResource;
+import com.demo.sys.entity.SysResourceExample;
 import org.springframework.stereotype.Service;
 
 import com.demo.base.dao.BaseDao;
@@ -19,6 +23,8 @@ public class SysRoleResourceServiceImpl extends BaseServiceImpl<SysRoleResource,
 
     @Resource
     private SysRoleResourceDao dao;
+    @Resource
+    private SysResourceDao resourceDao;
 
     @Override
     public BaseDao<SysRoleResource, SysRoleResourceExample> getDao() throws DaoException {
@@ -41,6 +47,17 @@ public class SysRoleResourceServiceImpl extends BaseServiceImpl<SysRoleResource,
             rr.setRoleId(roleId);
             rr.setResourceId(resourceId);
             dao.insertSelective(rr);
+
+            SysResourceExample example = new SysResourceExample();
+            SysResourceExample.Criteria criteria = example.createCriteria();
+            criteria.andParentIdEqualTo(resourceId);
+            List<SysResource> resourceList = resourceDao.selectByExample(example);
+            resourceList.forEach(resource->{
+                SysRoleResource rr2 = new SysRoleResource();
+                rr2.setRoleId(roleId);
+                rr2.setResourceId(resource.getId());
+                dao.insertSelective(rr2);
+            });
         });
     }
 
@@ -65,6 +82,16 @@ public class SysRoleResourceServiceImpl extends BaseServiceImpl<SysRoleResource,
             rr.setRoleId(roleId);
             rr.setResourceId(resourceId);
             dao.insertSelective(rr);
+            SysResourceExample example2 = new SysResourceExample();
+            SysResourceExample.Criteria criteria2 = example2.createCriteria();
+            criteria2.andParentIdEqualTo(resourceId);
+            List<SysResource> resourceList = resourceDao.selectByExample(example2);
+            resourceList.forEach(resource->{
+                SysRoleResource rr2 = new SysRoleResource();
+                rr2.setRoleId(roleId);
+                rr2.setResourceId(resource.getId());
+                dao.insertSelective(rr2);
+            });
         });
     }
 }

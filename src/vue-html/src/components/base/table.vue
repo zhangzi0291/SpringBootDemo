@@ -42,13 +42,13 @@ export default {
     }
   },
   watch: {
-    param: {
-      handler: function(val, oldVal) {
-        this.tableLoad = true;
-        this.searchData(this.param, this.page.current, this.page.pageSize)
-      },
-      deep: true
-    },
+    // param: {
+    //   handler: function(val, oldVal) {
+    //     this.tableLoad = true;
+    //     this.searchData(this.param, this.page.current, this.page.pageSize)
+    //   },
+    //   deep: true
+    // },
   },
   methods: {
     change: function(page) {
@@ -90,7 +90,6 @@ export default {
         $this.data = res.data.rows
         $this.tableLoad = false
       }).catch(function(error) {
-        console.log(error);
         $this.tableLoad = false
       });
     },

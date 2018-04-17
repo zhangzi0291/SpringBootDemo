@@ -12,6 +12,8 @@ public interface SysResourceService extends BaseService<SysResource, SysResource
 
     List<SysResource> getMenus(Integer id) ;
 
+    List<SysResource> getResourceMenus(Integer id) ;
+
     List<SysResource> getMenusByRoleId(Integer id) ;
 
 }

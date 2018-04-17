@@ -68,7 +68,7 @@ public class SysResourceController {
         //设置查询条件 。。。
 
         try {
-            List<SysResource> list = sysResourceService.getMenus(null);
+            List<SysResource> list = sysResourceService.getResourceMenus(null);
             List<SysResourceDto> options = setChildNood(list);
             return R.ok().putObject("data", options);
         } catch (Exception e) {

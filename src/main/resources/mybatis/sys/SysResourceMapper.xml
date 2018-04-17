@@ -300,13 +300,28 @@
         resource_order_num = #{ resourceOrderNum,jdbcType=INTEGER}
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <select id="selectByUsername" parameterType="map" resultMap="BaseResultMap">
+    <select id="selectMenus" parameterType="map" resultMap="BaseResultMap">
         SELECT DISTINCT rs.* FROM sys_resource rs
         LEFT JOIN sys_role_resource rr ON rs.id = rr.resource_id
         LEFT JOIN sys_role r ON r.id = rr.role_id
         LEFT JOIN sys_user_role ur ON r.id = ur.role_id
         LEFT JOIN sys_user u ON u.id = ur.user_id
         where rs.resource_type = 'url'
+        <if test="userId != null and userId != '1' ">
+            and u.id = #{userId,jdbcType=INTEGER}
+        </if>
+        <if test="roleId != null and roleId != '' ">
+            and r.id = #{roleId,jdbcType=INTEGER}
+        </if>
+        order by rs.resource_order_num
+    </select>
+    <select id="getResourceMenus" parameterType="map" resultMap="BaseResultMap">
+        SELECT DISTINCT rs.* FROM sys_resource rs
+        LEFT JOIN sys_role_resource rr ON rs.id = rr.resource_id
+        LEFT JOIN sys_role r ON r.id = rr.role_id
+        LEFT JOIN sys_user_role ur ON r.id = ur.role_id
+        LEFT JOIN sys_user u ON u.id = ur.user_id
+        where 1=1
         <if test="userId != null and userId != '1' ">
             and u.id = #{userId,jdbcType=INTEGER}
         </if>

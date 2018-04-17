@@ -31,6 +31,9 @@ router.beforeEach((to, from, next) => {
     if (error.response.status === 401) {
       return next({path: '/login',})
     }
+    if(error.response.status === 403) {
+      app.errorModal(error.response.data.message)
+    }
     return Promise.reject(error);
   });
   next();

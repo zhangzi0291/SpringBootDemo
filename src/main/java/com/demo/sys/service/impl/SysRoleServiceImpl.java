@@ -15,6 +15,7 @@ import com.demo.sys.dao.SysRoleDao;
 import com.demo.sys.entity.SysRole;
 import com.demo.sys.entity.SysRoleExample;
 import com.demo.sys.service.SysRoleService;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +41,11 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole, SysRoleExample>
         List<SysRoleResource> roleResourceList =  roleResourceDao.selectByExample(roleResourceExample);
 
         List<Integer> roleIdList = new ArrayList<>();
-        for(Integer roleId:roleIdList){
-            roleIdList.add(roleId);
+        for(SysRoleResource rr:roleResourceList){
+            roleIdList.add(rr.getRoleId());
+        }
+        if(CollectionUtils.isEmpty(roleIdList)){
+            return new ArrayList<>();
         }
         SysRoleExample example = new SysRoleExample();
         SysRoleExample.Criteria criteria = example.createCriteria();

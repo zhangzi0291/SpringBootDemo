@@ -31,7 +31,8 @@ public class WebSecurityCustomUserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) { //重写loadUserByUsername 方法获得 userdetails 类型用户
         SysUser user = userService.findByName(username);
         if(user == null){
-            throw new UsernameNotFoundException("用户名不存在");
+//            throw new UsernameNotFoundException("用户名不存在");
+            return null;
         }
         List<GrantedAuthority> authorities = new ArrayList<>();
         //用于添加用户的权限。只要把用户权限添加到authorities 就万事大吉。
