@@ -8,18 +8,28 @@
                     <div style="text-align:center">
                         <p class='login-tilte' slot="title">登陆</p>
                         <div class='login-content'>
-                            <Input class='login-input' v-model="username" :icon='usericon' :value="username" clearable autofocus>
-                            <span slot="prepend">
-                                <Icon type="person"></Icon>
-                            </span>
-                            </Input>
-                            <Input class='login-input' v-model="password" :type='passtype' :icon='passicon' :value="password" @on-click='showPassword'>
-                            <span slot="prepend">
-                                <Icon type="locked"></Icon>
-                            </span>
-                            </Input>
-                            <Checkbox v-model="remember">记住密码</Checkbox><br>
-                            <Button class='login-button' type="primary" @click="login">登陆</Button>
+                            <Form ref="form" :model="user" :rules="rule">
+                                <FormItem prop="username">
+                                    <Input class='login-input' v-model="user.username" :icon='usericon' :value="user.username" clearable autofocus>
+                                    <span slot="prepend">
+                                        <Icon type="person"></Icon>
+                                    </span>
+                                    </Input>
+                                </FormItem>
+                                <FormItem prop="password">
+                                    <Input class='login-input' v-model="user.password" :type='passtype' :icon='passicon' :value="user.password" @on-click='showPassword'>
+                                    <span slot="prepend">
+                                        <Icon type="locked"></Icon>
+                                    </span>
+                                    </Input>
+                                </FormItem>
+                                <FormItem prop="user">
+                                    <Checkbox v-model="remember">记住密码</Checkbox><br>
+                                </FormItem>
+                                <FormItem prop="user">
+                                    <Button class='login-button' type="primary" @click="login">登陆</Button>
+                                </FormItem>
+                            </Form>
                         </div>
                     </div>
                 </Card>
@@ -33,24 +43,30 @@ export default {
     data() {
         return {
             remember: true,
-            username: localStorage.username,
-            password: localStorage.password,
+            user: {
+                username: localStorage.username,
+                password: localStorage.password,
+            },
             isShow: true,
             write: false,
+            rule: {
+                username: [{ required: true, message: "用户名必填", trigger: 'blur' }],
+                password: [{ required: true, message: "密码必填", trigger: 'blur' }]
+            }
         }
     },
     created() {
         let $this = this;
         document.onkeyup = function(e) {
             let key = e.keyCode
-            if(key == 13){
+            if (key == 13) {
                 $this.login()
             }
         }
     },
     computed: {
         usericon: function() {
-            return this.username ? 'close' : ''
+            return this.user.username ? 'close' : ''
         },
         passicon: function() {
             return this.isShow ? 'eye' : 'eye-disabled'
@@ -64,19 +80,28 @@ export default {
             this.isShow = this.isShow ? false : true;
         },
         login: function() {
+            let flag = false;
+            this.$refs.form.validate((valid) => {
+                if (!valid) {
+                    flag = true;
+                }
+            })
+            if(flag){
+                return;
+            }
             let $this = this
             this.$ajax({
                 method: 'POST',
                 url: '/sys/login',
                 data: {
-                    username: $this.username,
-                    password: $this.password
+                    username: $this.user.username,
+                    password: $this.user.password
                 }
             }).then(function(res) {
                 if (res.data.code == '200') {
                     if ($this.remember) {
-                        localStorage.username = $this.username
-                        localStorage.password = $this.password
+                        localStorage.username = $this.user.username
+                        localStorage.password = $this.user.password
                     } else {
                         localStorage.username = ''
                         localStorage.password = ''

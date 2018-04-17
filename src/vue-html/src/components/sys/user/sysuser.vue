@@ -13,13 +13,13 @@
             <div>
                 <Form inline :model="searchData">
                     <FormItem label-for='search'>
-                        <Input v-model="searchData.resourceName" class="input-search" placeholder="资源名称" clearable></Input>
+                        <Input v-model="searchData.username" class="input-search" placeholder="用户名" clearable></Input>
                     </FormItem>
                     <FormItem label-for='search2'>
-                        <Input v-model="searchData.resourceType" class="input-search" placeholder="资源类型" clearable></Input>
+                        <Input v-model="searchData.name" class="input-search" placeholder="名称" clearable></Input>
                     </FormItem>
                     <FormItem label-for='search4'>
-                        <Input v-model="searchData.resourceUrl" class="input-search" placeholder="URL" clearable></Input>
+                        <Input v-model="searchData.mobile" class="input-search" placeholder="手机号" clearable></Input>
                     </FormItem>
                     <FormItem>
                         <Button type="primary" @click='search'>查询</Button>
@@ -50,8 +50,8 @@
         <div class="page-content">
             <t-table ref='table' :url='url.list' :param='data.param' :columns='data.columns'></t-table>
         </div>
-        <m-modal ref='editModal' :title="'编辑'" :show='editshow' :data='detail.data' :columns='detail.columns' :ok='editok'></m-modal>
-        <m-modal ref='addModal' :title="'新增'" :show='addshow' :data='add.data' :columns='add.columns' :ok='addok'></m-modal>
+        <m-modal ref='editModal' :title="'编辑'" :show='editshow' :data='detail.data' :columns='detail.columns' :ok='editok' :rule='detail.rule'></m-modal>
+        <m-modal ref='addModal' :title="'新增'" :show='addshow' :data='add.data' :columns='add.columns' :ok='addok' :rule='add.rule'></m-modal>
     </div>
 </template>
 <script>
@@ -69,31 +69,41 @@ export default {
             detail: {
                 data: {},
                 columns: [
-                    { key: "name", value: "名称" },
+                    { key: "name", value: "名称", rule: [{ required: true, message: "名称必填", trigger: 'blur' }], },
                     { key: "username", value: "用户名" },
-                    { key: "password", value: "密码", type:'password'},
+                    { key: "password", value: "密码", type: 'password' },
                     { key: "mobile", value: "手机号" },
                     { key: "email", value: "电子邮件" },
-                    { key: "roleId", value: "角色",type:'select', ajax:{url:'sys/role/selectOptions'}},
-                    { key: "status", value: "状态",type:'select', child:[{name:'可用',value:'1'},{name:'禁用',value:'2'}]},
-                ]
+                    { key: "roleId", value: "角色", type: 'select', ajax: { url: 'sys/role/selectOptions' } },
+                    { key: "status", value: "状态", type: 'select', child: [{ name: '可用', value: '1' }, { name: '禁用', value: '2' }] },
+                ],
+                rule: {
+                    "name": [{ required: true, message: "名称必填", trigger: 'blur' }],
+                    "username": [{ required: true, message: "用户名必填", trigger: 'blur' }],
+                    "password": [{ required: true, message: "密码必填", trigger: 'blur' }]
+                }
             },
             add: {
-                data:{},
+                data: {},
                 columns: [
                     { key: "name", value: "名称" },
                     { key: "username", value: "用户名" },
-                    { key: "password", value: "密码", type:'password'},
+                    { key: "password", value: "密码", type: 'password' },
                     { key: "mobile", value: "手机号" },
                     { key: "email", value: "电子邮件", },
-                    { key: "roleId", value: "角色",type:'select', ajax:{url:'sys/role/selectOptions'}},
-                    { key: "status", value: "状态",type:'select', child:[{name:'可用',value:'1'},{name:'禁用',value:'2'}]},
-                ]
+                    { key: "roleId", value: "角色", type: 'select', ajax: { url: 'sys/role/selectOptions' } },
+                    { key: "status", value: "状态", type: 'select', child: [{ name: '可用', value: '1' }, { name: '禁用', value: '2' }] },
+                ],
+                rule: {
+                    "name": [{ required: true, message: "名称必填", trigger: 'blur' }],
+                    "username": [{ required: true, message: "用户名必填", trigger: 'blur' }],
+                    "password": [{ required: true, message: "密码必填", trigger: 'blur' }]
+                }
             },
             searchData: {
-                resourceName: '',
-                resourceType: '',
-                resourceUrl: '',
+                username: '',
+                name: '',
+                mobile: '',
             },
             editshow: false,
             addshow: false,
@@ -175,7 +185,8 @@ export default {
                                 return h("div", new Date(params.row.expiredTime).Format("yyyy-MM-dd hh:mm:ss"))
                             }
                         }
-                    }, {
+                    },
+                    {
                         title: '创建时间',
                         key: 'createTime',
                         render: function(h, params) {
@@ -189,12 +200,6 @@ export default {
                     },
                 ],
             },
-            value: '123'
-        }
-    },
-    watch:{
-        addshow(val){
-            console.log(val)
         }
     },
     methods: {
@@ -218,9 +223,9 @@ export default {
             if (name == 'add') {
                 let $this = this;
                 $this.addshow = false;
-                setTimeout(function(){
+                setTimeout(function() {
                     $this.addshow = true;
-                },100)
+                }, 100)
             }
         },
         addok: function() {

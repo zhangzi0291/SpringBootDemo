@@ -1,8 +1,8 @@
 <template>
     <Modal v-model="isshow" :title="title" width="380" @on-ok='ok' @on-cancel='cancel'>
-        <Form :model="data" :inline='inline'>
+        <Form :model="data" :inline='inline' :rules='rule'>
             <template v-for="item in columns">
-                <FormItem :label="item.value+'：'" :key="item.id" :v-model="data[item.key]">
+                <FormItem :label="item.value+'：'" :key="item.id" :v-model="data[item.key]" :prop="item.key">
                     <Select v-model="data[item.key]" :readonly='item.readonly' v-if="item.type=='select'">                  
                         <Option v-for="op in item.child" :value="op.value" :key="op.value" >{{ op.name }}</Option>
                     </Select>
@@ -10,7 +10,7 @@
                         <Radio v-for="op in item.child" :value="op.value" :key="op.value" :label="op.name"></Radio>
                     </RadioGroup>
                     <Input v-model="data[item.key]" :readonly='item.readonly' type="password" v-else-if="item.type=='password'"></Input>
-                    <Input v-model="data[item.key]" :readonly='item.readonly' v-else></Input>
+                    <Input v-model="data[item.key]" :readonly='item.readonly' v-else ></Input>
                 </FormItem>
             </template>
         </Form>
@@ -71,6 +71,9 @@ export default {
     props: {
         title: {
             type: String
+        },
+        rule: {
+            type: Object
         },
         data: {
             type: Object

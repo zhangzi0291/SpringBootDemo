@@ -13,13 +13,7 @@
       <div>
         <Form inline :model="searchData">
           <FormItem label-for='search'>
-            <Input v-model="searchData.resourceName" class="input-search" placeholder="资源名称" clearable></Input>
-          </FormItem>
-          <FormItem label-for='search2'>
-            <Input v-model="searchData.resourceType" class="input-search" placeholder="资源类型" clearable></Input>
-          </FormItem>
-          <FormItem label-for='search4'>
-            <Input v-model="searchData.resourceUrl" class="input-search" placeholder="URL" clearable></Input>
+            <Input v-model="searchData.roleName" class="input-search" placeholder="名称" clearable></Input>
           </FormItem>
           <FormItem>
             <Button type="primary" @click='search'>查询</Button>
@@ -124,9 +118,7 @@ export default {
       },
       
       searchData: {
-        resourceName: '',
-        resourceType: '',
-        resourceUrl: '',
+        roleName: '',
       },
       editshow: false,
       addshow: false,
@@ -153,7 +145,6 @@ export default {
                     }).then(function(res) {
                       $this.editshow = true;
                       $this.detail.data = res.data.data
-                      console.log( res.data.options)
                       $this.detail.menuItems = res.data.options
                     })
                     $this.editshow = false;

@@ -52,6 +52,9 @@ public class SysRoleController {
         if(!StringUtils.isEmpty(page.getOrder())&&!StringUtils.isEmpty(page.getSortCol())){
             example.setOrderByClause(CamelToUnderlineUtil.camelToUnderline(page.getSortCol())+" "+page.getOrder());
         }
+        if(!StringUtils.isEmpty(sysRole.getRoleName())){
+            criteria.andRoleNameLike("%"+sysRole.getRoleName()+"%");
+        }
         try {
             List< SysRole> list = sysRoleService.selectByExample(example);
             Integer count = sysRoleService.countByExample(example);
