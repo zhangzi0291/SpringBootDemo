@@ -52,9 +52,9 @@ export default {
         data(val) {
             let $this = this;
             this.columns.forEach(function(val, index, err) {
-                if (val.type == 'password') {
-                    $this.data[val.key] = undefined
-                }
+                // if (val.type == 'password') {
+                //     $this.data[val.key] = undefined
+                // }
                 if ( (val.type == 'date' || val.type == 'daterange') &&  $this.data[val.key]) {
                     console.log($this.data[val.key])
                     $this.data[val.key] = new Date($this.data[val.key])
@@ -119,6 +119,7 @@ export default {
                     this.data[key] = (this.data[key].getTime())
                 }
             }
+            console.log(this.data)
             return this.data
         },
         validateForm: function(){

@@ -8,22 +8,20 @@ import com.demo.base.security.login.handler.WebSecurityLogoutSuccessHandler;
 import com.demo.base.security.url.UrlAccessDecisionManager;
 import com.demo.base.security.url.UrlFilterInvocationSecurityMetadataSource;
 import com.demo.base.security.user.WebSecurityCustomUserService;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.access.intercept.FilterSecurityInterceptor;
 import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsUtils;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.annotation.Resource;
 
@@ -47,11 +45,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationAccessDeniedHandler authenticationAccessDeniedHandler;
     @Resource
     private WebSecurityAuthenticationProvider provider;
+    @Resource
+    private WebSecurityCustomUserService userService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(webSecurityCustomUserService);
-        auth.authenticationProvider(provider);
+        auth.userDetailsService(webSecurityCustomUserService).passwordEncoder(new ShaPasswordEncoder());
+        auth.authenticationProvider(new WebSecurityAuthenticationProvider(userService));
     }
 
     @Override
@@ -87,5 +87,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterAfter(new CorsFilter(), CsrfFilter.class);
     }
 
-
+    @Bean
+    public AuthenticationProvider daoAuthenticationProvider(){
+        return provider;
+    }
 }

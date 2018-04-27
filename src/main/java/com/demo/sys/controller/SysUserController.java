@@ -11,6 +11,7 @@ import com.demo.sys.entity.SysUserDto;
 import com.demo.sys.service.SysUserRoleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,6 +60,9 @@ public class SysUserController {
     @Transactional
     public R addJson(SysUser sysUser ,Integer roleId){
     	Integer num = 0;
+    	if(!StringUtils.isEmpty(sysUser.getPassword())){
+            sysUser.setPassword(new ShaPasswordEncoder().encodePassword(sysUser.getPassword(),null));
+        }
     	if(roleId == null){
             return R.error("保存失败,必须选择角色");
         }
@@ -91,6 +95,9 @@ public class SysUserController {
     @RequestMapping("edit")
     public R editJson(Map<String, Object> map, SysUser sysUser, Integer roleId){
    		Integer num = 0;
+        if(!StringUtils.isEmpty(sysUser.getPassword())){
+            sysUser.setPassword(new ShaPasswordEncoder().encodePassword(sysUser.getPassword(),null));
+        }
         try {
             num = sysUserService.updateByPrimaryKeySelective(sysUser);
             sysUserRoleService.updateUserRole(sysUser.getId(),roleId);

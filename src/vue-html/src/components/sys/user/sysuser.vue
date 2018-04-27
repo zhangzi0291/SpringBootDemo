@@ -208,6 +208,15 @@ export default {
             this.data.param = this.searchData
             this.$refs.table.searchData()
         },
+        dropdownFunction: function(name) {
+            if (name == 'add') {
+                let $this = this;
+                $this.addshow = false;
+                setTimeout(function() {
+                    $this.addshow = true;
+                }, 1);
+            }
+        },
         editok: function() {
             let $this = this;
             if (this.$refs.editModal.validateForm()) {
@@ -227,17 +236,9 @@ export default {
                 $this.successModal("编辑成功")
             })
         },
-        dropdownFunction: function(name) {
-            if (name == 'add') {
-                let $this = this;
-                $this.addshow = false;
-                setTimeout(function() {
-                    $this.addshow = true;
-                }, 1);
-            }
-        },
         addok: function() {
             let $this = this;
+            this.$refs.addModal.getParams()
             if (this.$refs.addModal.validateForm()) {
                 $this.addshow = false
                 setTimeout(function() {
